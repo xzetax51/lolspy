@@ -1,4 +1,3 @@
-import asyncio
 import logging
 import os
 import random
@@ -21,32 +20,36 @@ logger = logging.getLogger(__name__)
 # ДАННЫЕ
 # ==========================
 CHAMPIONS = [
-    "Ahri", "Akali", "Alistar", "Amumu", "Annie", "Ashe", "Aurelion Sol",
-    "Azir", "Bard", "Blitzcrank", "Brand", "Braum", "Caitlyn", "Camille",
-    "Cassiopeia", "Darius", "Diana", "Draven", "Ekko", "Elise", "Evelynn",
-    "Ezreal", "Fiora", "Fizz", "Galio", "Garen", "Gnar", "Gragas", "Graves",
-    "Irelia", "Ivern", "Janna", "Jarvan IV", "Jax", "Jhin", "Jinx", "Kai'Sa",
-    "Karma", "Karthus", "Kassadin", "Katarina", "Kayle", "Kayn", "Kennen",
-    "Kha'Zix", "Kindred", "Kled", "Leblanc", "Lee Sin", "Leona", "Lissandra",
-    "Lucian", "Lulu", "Lux", "Malphite", "Malzahar", "Maokai", "Master Yi",
-    "Miss Fortune", "Mordekaiser", "Morgana", "Nami", "Nasus", "Nautilus",
-    "Nidalee", "Nocturne", "Nunu & Willump", "Olaf", "Orianna", "Ornn",
-    "Pantheon", "Poppy", "Pyke", "Quinn", "Rakan", "Rammus", "Rek'Sai",
-    "Renekton", "Rengar", "Riven", "Rumble", "Ryze", "Samira", "Sejuani",
-    "Senna", "Seraphine", "Shaco", "Shen", "Shyvana", "Singed", "Sion",
-    "Sivir", "Skarner", "Sona", "Soraka", "Swain", "Sylas", "Syndra",
-    "Tahm Kench", "Taliyah", "Talon", "Taric", "Teemo", "Thresh", "Tristana",
-    "Trundle", "Tryndamere", "Twisted Fate", "Twitch", "Udyr", "Urgot",
-    "Varus", "Vayne", "Veigar", "Vel'Koz", "Vi", "Viego", "Viktor",
-    "Vladimir", "Volibear", "Warwick", "Wukong", "Xayah", "Xerath", "Xin Zhao",
-    "Yasuo", "Yone", "Yorick", "Yuumi", "Zac", "Zed", "Ziggs", "Zilean",
-    "Zoe", "Zyra",
+    "Аврора", "Азир", "Акали", "Акшан", "Алистар", "Амбесса", "Амуму",
+    "Анивия", "Ари", "Атрокс", "Аурелион Сол", "Афелий", "Бард", "Бел'Вет",
+    "Блицкранк", "Брайер", "Брам", "Брэнд", "Вай", "Варвик", "Варус",
+    "Вейгар", "Вейн", "Векс", "Вел'Коз", "Виего", "Виктор", "Владимир",
+    "Волибир", "Вуконг", "Галио", "Гангпланк", "Гарен", "Гвен", "Гекарим",
+    "Гнар", "Грас", "Грейвз", "Дариус", "Джакс", "Джарван IV", "Джейс",
+    "Джин", "Джинкс", "Диана", "Доктор Мундо", "Дрейвен", "Иона", "Жанна",
+    "Заахен", "Зайра", "Зак", "Зед", "Зери", "Зиггс", "Зилеан", "Зои",
+    "Иверн", "Иллаой", "Ирелия", "Йорик", "К'Санте", "Ка'Зикс", "Каин",
+    "Кай'Са", "Калиста", "Камилла", "Карма", "Картус", "Кассадин", "Кассиопея",
+    "Катарина", "Квинн", "Кейл", "Кейтлин", "Кеннен", "Киана", "Киндред",
+    "Клед", "Ког'Мао", "Корки", "Ксин Жао", "Ле Блан", "Леона", "Ли Син",
+    "Лиллия", "Лиссандра", "Лулу", "Люкс", "Люциан", "Мальзахар", "Мальфит",
+    "Маокай", "Мастер Йи", "Милио", "Мисс Фортуна", "Моргана", "Мордекайзер",
+    "Мэл", "Наафири", "Нами", "Насус", "Наутилус", "Нидали", "Нико", "Нила",
+    "Ноктюрн", "Нуну и Виллумп", "Олаф", "Орианна", "Орн", "Пайк", "Пантеон",
+    "Поппи", "Райз", "Рамбл", "Раммус", "Рек'Сай", "Реллу", "Рената Гласк",
+    "Ренгар", "Ренектон", "Ривен", "Рэйкан", "Сайлас", "Самира", "Свейн",
+    "Седжуани", "Сенна", "Серафина", "Сетт", "Сивир", "Синджед", "Синдра",
+    "Сион", "Скарнер", "Смолдер", "Сона", "Сорака", "Таам Кенч", "Талия",
+    "Талон", "Тарик", "Твистед Фэйт", "Твич", "Тимо", "Трандл", "Треш",
+    "Триндамир", "Тристана", "Удир", "Ургот", "Фиддлстикс", "Физз", "Фиора",
+    "Хвэй", "Хеймердингер", "Чо'Гат", "Шако", "Шая", "Шен", "Шивана",
+    "Эвелинн", "Эзреаль", "Экко", "Элиза", "Энни", "Эш", "Юми", "Юнара", "Ясуо",
 ]
 MIN_PLAYERS = 3
 SPY_CARD = "Шпион"
 
 # ==========================
-# МОДЕЛИ ДАННЫХ (Pydantic для легкой сериализации в Redis)
+# МОДЕЛИ ДАННЫХ (Pydantic для сохранения в Redis)
 # ==========================
 class Player(BaseModel):
     user_id: str
@@ -61,13 +64,14 @@ class Lobby(BaseModel):
     spy_champion: Optional[str] = None
     spy_id: Optional[str] = None
     order: List[str] = Field(default_factory=list)
-    votes: Dict[str, str] = Field(default_factory=dict)  # voter_id -> target_id
+    votes: Dict[str, str] = Field(default_factory=dict)
     created_at: float = Field(default_factory=time.time)
     updated_at: float = Field(default_factory=time.time)
 
 # ==========================
 # REDIS КЛИЕНТ (Upstash)
 # ==========================
+# Эту переменную мы зададим в Vercel
 REDIS_URL = os.environ.get("UPSTASH_REDIS_URL", "redis://localhost:6379")
 redis_client = redis.from_url(REDIS_URL, decode_responses=True)
 
@@ -79,7 +83,7 @@ async def get_lobby(code: str) -> Optional[Lobby]:
 
 async def save_lobby(lobby: Lobby):
     lobby.updated_at = time.time()
-    # Сохраняем с TTL 24 часа (86400 секунд), чтобы не засорять Redis
+    # Сохраняем с TTL 24 часа (86400 сек), чтобы база не засорялась
     await redis_client.set(f"lobby:{lobby.code}", lobby.model_dump_json(), ex=86400)
 
 async def delete_lobby(code: str):
@@ -90,7 +94,6 @@ async def delete_lobby(code: str):
 # ==========================
 def gen_code() -> str:
     chars = string.ascii_uppercase + string.digits
-    # В реальном мире лучше проверять и в Redis, но для 5 символов коллизии крайне редки
     return "".join(random.choices(chars, k=5))
 
 def require_player(lobby: Lobby, user_id: str) -> Player:
@@ -122,7 +125,7 @@ class CodeUserRequest(BaseModel):
 class VoteRequest(BaseModel):
     code: str
     user_id: str
-    target_id: str  # может быть "skip"
+    target_id: str
 
 # ==========================
 # СЕРИАЛИЗАЦИЯ СОСТОЯНИЯ
@@ -147,8 +150,7 @@ def serialize_state(lobby: Lobby, user_id: str) -> dict:
         data["is_spy"] = is_spy
         data["order"] = [
             {"user_id": uid, "name": lobby.players[uid].name}
-            for uid in lobby.order
-            if uid in lobby.players
+            for uid in lobby.order if uid in lobby.players
         ]
 
     if lobby.status in ("voting", "results"):
@@ -175,13 +177,8 @@ def serialize_state(lobby: Lobby, user_id: str) -> dict:
             "common_champion": lobby.common_champion,
             "spy_champion": lobby.spy_champion,
             "tally": [
-                {
-                    "user_id": uid,
-                    "name": lobby.players[uid].name if uid in lobby.players else "—",
-                    "votes": cnt,
-                }
-                for uid, cnt in tally.items()
-                if uid != "skip"
+                {"user_id": uid, "name": lobby.players[uid].name if uid in lobby.players else "—", "votes": cnt}
+                for uid, cnt in tally.items() if uid != "skip"
             ] + ([{"user_id": "skip", "name": "Пропустили", "votes": tally.get("skip", 0)}] if tally.get("skip") else []),
             "accused_id": accused_id,
             "accused_name": lobby.players[accused_id].name if accused_id in lobby.players else None,
@@ -216,11 +213,9 @@ async def join_lobby(req: JoinLobbyRequest):
         raise HTTPException(status_code=404, detail="Лобби не найдено")
     if lobby.status != "lobby":
         raise HTTPException(status_code=400, detail="Игра уже началась, присоединиться нельзя")
-
     if req.user_id not in lobby.players:
         lobby.players[req.user_id] = Player(user_id=req.user_id, name=req.name or "Игрок")
         await save_lobby(lobby)
-
     return serialize_state(lobby, req.user_id)
 
 @app.get("/api/state/{code}")
@@ -239,9 +234,8 @@ async def start_game(req: CodeUserRequest):
     require_host(lobby, req.user_id)
     if lobby.status != "lobby":
         raise HTTPException(status_code=400, detail="Игра уже запущена")
-
     if len(lobby.players) < MIN_PLAYERS:
-        raise HTTPException(status_code=400, detail=f"Нужно минимум {MIN_PLAYERS} игроков, сейчас {len(lobby.players)}")
+        raise HTTPException(status_code=400, detail=f"Нужно минимум {MIN_PLAYERS} игроков")
 
     common, spy_champ = random.sample(CHAMPIONS, 2)
     lobby.common_champion = common
@@ -256,11 +250,9 @@ async def start_game(req: CodeUserRequest):
         swap = random.randint(1, len(order) - 1)
         order[0], order[swap] = order[swap], order[0]
     lobby.order = order
-
     lobby.votes.clear()
     lobby.status = "playing"
     await save_lobby(lobby)
-
     return serialize_state(lobby, req.user_id)
 
 @app.post("/api/begin_voting")
@@ -271,7 +263,6 @@ async def begin_voting(req: CodeUserRequest):
     require_host(lobby, req.user_id)
     if lobby.status != "playing":
         raise HTTPException(status_code=400, detail="Сейчас не фаза обсуждения")
-
     lobby.status = "voting"
     await save_lobby(lobby)
     return serialize_state(lobby, req.user_id)
@@ -284,7 +275,7 @@ async def cast_vote(req: VoteRequest):
     require_player(lobby, req.user_id)
     if lobby.status != "voting":
         raise HTTPException(status_code=400, detail="Сейчас не фаза голосования")
-
+    
     target = req.target_id
     if target != "skip" and target not in lobby.players:
         raise HTTPException(status_code=400, detail="Некорректная цель голосования")
@@ -295,7 +286,6 @@ async def cast_vote(req: VoteRequest):
     if len(lobby.votes) >= len(lobby.players):
         lobby.status = "results"
         await save_lobby(lobby)
-
     return serialize_state(lobby, req.user_id)
 
 @app.post("/api/reveal")
@@ -306,10 +296,9 @@ async def reveal_now(req: CodeUserRequest):
     require_host(lobby, req.user_id)
     if lobby.status != "voting":
         raise HTTPException(status_code=400, detail="Сейчас не фаза голосования")
-
+    
     for uid in lobby.players:
         lobby.votes.setdefault(uid, "skip")
-
     lobby.status = "results"
     await save_lobby(lobby)
     return serialize_state(lobby, req.user_id)
@@ -322,7 +311,7 @@ async def play_again(req: CodeUserRequest):
     require_host(lobby, req.user_id)
     if lobby.status != "results":
         raise HTTPException(status_code=400, detail="Раунд ещё не завершён")
-
+    
     lobby.status = "lobby"
     lobby.common_champion = None
     lobby.spy_champion = None
@@ -330,7 +319,6 @@ async def play_again(req: CodeUserRequest):
     lobby.order = []
     lobby.votes.clear()
     await save_lobby(lobby)
-
     return serialize_state(lobby, req.user_id)
 
 @app.post("/api/leave")
@@ -341,21 +329,19 @@ async def leave_lobby(req: CodeUserRequest):
     require_player(lobby, req.user_id)
     if lobby.status != "lobby":
         raise HTTPException(status_code=400, detail="Нельзя выйти во время игры")
-
+    
     del lobby.players[req.user_id]
-
     if not lobby.players:
         await delete_lobby(lobby.code)
         return {"ok": True, "lobby_deleted": True}
-
+    
     if lobby.host_id == req.user_id:
         lobby.host_id = next(iter(lobby.players.keys()))
-
     await save_lobby(lobby)
     return {"ok": True, "lobby_deleted": False}
 
 # ==========================
-# СТАТИКА И TELEGRAM WEBHOOK (Serverless-friendly)
+# СТАТИКА И TELEGRAM WEBHOOK
 # ==========================
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -377,20 +363,16 @@ async def startup_event():
                     json={"url": webhook_url}
                 )
                 if response.json().get("ok"):
-                    logger.info(f"✅ Webhook успешно установлен на: {webhook_url}")
+                    logger.info(f"✅ Webhook установлен на: {webhook_url}")
                 else:
-                    logger.error(f"❌ Ошибка установки webhook: {response.text}")
+                    logger.error(f"❌ Ошибка webhook: {response.text}")
             except Exception as e:
                 logger.error(f"❌ Исключение при установке webhook: {e}")
-    else:
-        logger.warning("⚠️ BOT_TOKEN или WEBAPP_URL не заданы. Бот не будет отвечать.")
 
 @app.post("/webhook")
 async def telegram_webhook(request: Request):
-    """Легковесный обработчик вебхуков для Vercel (заменяет тяжелый polling)"""
     if not BOT_TOKEN:
         return {"ok": True}
-    
     try:
         update = await request.json()
     except Exception:
@@ -403,7 +385,7 @@ async def telegram_webhook(request: Request):
         if text in ["/start", "/play"]:
             payload = {
                 "chat_id": chat_id,
-                "text": "Привет! Это бот для игры в «Шпиона» по League of Legends.\n\nНажми кнопку ниже, чтобы открыть приложение: создай лобби или введи код, чтобы присоединиться к друзьям.",
+                "text": "Привет! Это бот для игры в «Шпиона» по League of Legends.\n\nНажми кнопку ниже, чтобы открыть приложение.",
                 "reply_markup": {
                     "inline_keyboard": [[
                         {"text": "🎮 Открыть игру", "web_app": {"url": WEBAPP_URL}}
@@ -412,5 +394,4 @@ async def telegram_webhook(request: Request):
             }
             async with httpx.AsyncClient() as client:
                 await client.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json=payload)
-                
     return {"ok": True}
