@@ -7,185 +7,298 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --lol-gold: #c8aa6e;
-            --lol-gold-light: #f0e6d2;
-            --lol-turquoise: #0ac8b9;
-            --lol-dark: #010a13;
-            --lol-dark-light: #091428;
-            --lol-red: #e84057;
+            /* Более мягкая и современная палитра в стиле LoL */
+            --lol-gold: #d4af37;
+            --lol-gold-light: #f4e4bc;
+            --lol-turquoise: #00b4d8;
+            --lol-dark: #0f172a;       /* Глубокий сланец вместо черного */
+            --lol-dark-light: #1e293b; /* Светлый сланец для карточек */
+            --lol-red: #f43f5e;        /* Мягкий розово-красный */
+            --glass-bg: rgba(30, 41, 59, 0.65);
+            --glass-border: rgba(212, 175, 55, 0.15);
         }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--lol-dark);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: radial-gradient(circle at top center, #1e293b 0%, #0f172a 100%);
             color: var(--lol-gold-light);
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
         }
+
         .container {
             width: 100%;
             max-width: 480px;
-            padding: 20px;
-            box-sizing: border-box;
-            text-align: center;
+            padding: 24px 20px;
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         h1 {
             color: var(--lol-gold);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 1.5rem;
-            margin-bottom: 5px;
+            font-weight: 700;
+            font-size: 1.6rem;
+            margin: 0 0 8px 0;
+            letter-spacing: 0.5px;
+            text-align: center;
         }
+
         .subtitle {
             color: var(--lol-turquoise);
-            font-size: 0.9rem;
-            margin-bottom: 30px;
+            font-size: 0.95rem;
+            margin-bottom: 32px;
+            text-align: center;
+            opacity: 0.9;
         }
+
         .card {
-            background: linear-gradient(135deg, var(--lol-dark-light) 0%, #0a1428 100%);
-            border: 2px solid var(--lol-gold);
-            border-radius: 12px;
-            padding: 25px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
             margin-bottom: 20px;
-            box-shadow: 0 0 20px rgba(200, 170, 110, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
         }
+
         .champion-avatar {
-            width: 120px;
-            height: 120px;
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
-            border: 3px solid var(--lol-gold);
-            box-shadow: 0 0 25px rgba(10, 200, 185, 0.4);
-            margin-bottom: 15px;
+            border: 3px solid rgba(212, 175, 55, 0.4);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            margin: 0 auto 16px auto;
+            display: block;
             object-fit: cover;
-            background-color: #000;
+            background-color: #0f172a;
         }
+
         .spy-avatar {
-            width: 120px;
-            height: 120px;
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
-            border: 3px solid var(--lol-red);
-            box-shadow: 0 0 25px rgba(232, 64, 87, 0.4);
-            margin: 0 auto 15px auto;
+            border: 3px solid rgba(244, 63, 94, 0.4);
+            box-shadow: 0 8px 24px rgba(244, 63, 94, 0.15);
+            margin: 0 auto 16px auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
-            background-color: #1a0505;
+            font-size: 2.8rem;
+            background: rgba(244, 63, 94, 0.1);
         }
+
         .card-title {
-            font-size: 1.8rem;
-            font-weight: bold;
+            font-size: 1.6rem;
+            font-weight: 700;
             color: var(--lol-gold);
-            margin: 10px 0;
+            margin: 8px 0;
+            text-align: center;
         }
+
         .card-hint {
             color: var(--lol-turquoise);
-            font-size: 0.95rem;
-            margin-top: 10px;
+            font-size: 0.9rem;
+            margin-top: 12px;
+            text-align: center;
+            line-height: 1.4;
+            opacity: 0.9;
         }
+
         input {
             width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            background: var(--lol-dark);
-            border: 1px solid var(--lol-gold);
+            padding: 14px 16px;
+            margin: 12px 0;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--glass-border);
             color: var(--lol-gold-light);
-            border-radius: 6px;
-            font-size: 1rem;
+            border-radius: 14px;
+            font-size: 1.05rem;
             text-align: center;
-            text-transform: uppercase;
-            box-sizing: border-box;
+            letter-spacing: 2px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         input::placeholder {
-            color: #6b7280;
-            text-transform: none;
+            color: rgba(244, 228, 188, 0.3);
+            letter-spacing: 0.5px;
+            font-size: 0.95rem;
         }
+
+        input:focus {
+            outline: none;
+            border-color: var(--lol-gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
         button {
             width: 100%;
-            padding: 14px;
-            margin: 8px 0;
-            background: linear-gradient(to right, #1e282d, #0a1428);
-            border: 1px solid var(--lol-gold);
+            padding: 16px;
+            margin: 10px 0;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
             color: var(--lol-gold);
             font-size: 1rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            border-radius: 6px;
+            font-weight: 600;
+            border-radius: 14px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.5px;
         }
+
         button:active {
-            background: var(--lol-gold);
-            color: var(--lol-dark);
+            transform: scale(0.97);
+            background: rgba(212, 175, 55, 0.25);
         }
+
         button.secondary {
-            border-color: var(--lol-turquoise);
+            background: rgba(0, 180, 216, 0.08);
+            border-color: rgba(0, 180, 216, 0.25);
             color: var(--lol-turquoise);
         }
+
         button.secondary:active {
-            background: var(--lol-turquoise);
-            color: var(--lol-dark);
+            background: rgba(0, 180, 216, 0.2);
+            transform: scale(0.97);
         }
+
         .player-list {
-            text-align: left;
-            margin: 15px 0;
+            margin: 16px 0;
         }
+
         .player-item {
-            padding: 10px;
-            border-bottom: 1px solid rgba(200, 170, 110, 0.2);
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: background 0.2s ease;
         }
+
         .player-item.host {
-            color: var(--lol-turquoise);
+            background: rgba(0, 180, 216, 0.08);
+            border: 1px solid rgba(0, 180, 216, 0.15);
         }
+
         .player-item .badge {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             background: var(--lol-gold);
             color: var(--lol-dark);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
         }
+
         .order-list {
-            text-align: left;
-            margin: 15px 0;
-            padding-left: 20px;
+            margin: 16px 0;
+            padding-left: 0;
+            list-style-type: none;
         }
+
         .order-list li {
             margin: 8px 0;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
             color: var(--lol-gold-light);
+            display: flex;
+            align-items: center;
         }
+
         .vote-btn {
-            margin: 5px 0;
+            margin: 8px 0;
             text-transform: none;
-            font-weight: normal;
+            font-weight: 500;
+            text-align: left;
+            padding: 14px 16px;
         }
+
         .vote-btn.voted {
-            background: var(--lol-turquoise);
-            color: var(--lol-dark);
+            background: rgba(0, 180, 216, 0.2);
+            color: var(--lol-turquoise);
             border-color: var(--lol-turquoise);
         }
+
         .results-table {
             width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0;
-            font-size: 0.9rem;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+            margin: 16px 0;
+            font-size: 0.95rem;
         }
-        .results-table th, .results-table td {
-            padding: 8px;
-            border-bottom: 1px solid rgba(200, 170, 110, 0.2);
-            text-align: left;
-        }
+
         .results-table th {
             color: var(--lol-turquoise);
+            font-weight: 600;
+            text-align: left;
+            padding: 0 8px 8px 8px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+
+        .results-table td {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 12px 16px;
+        }
+        
+        .results-table tr td:first-child {
+            border-radius: 10px 0 0 10px;
+        }
+        
+        .results-table tr td:last-child {
+            border-radius: 0 10px 10px 0;
+            text-align: right;
+            font-weight: 700;
+            color: var(--lol-gold);
+        }
+
         .hidden { display: none !important; }
-        .error { color: var(--lol-red); font-size: 0.9rem; margin-top: 10px; }
+        .error { 
+            color: var(--lol-red); 
+            font-size: 0.9rem; 
+            margin-top: 12px; 
+            text-align: center;
+            background: rgba(244, 63, 94, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+            color: rgba(244, 228, 188, 0.4);
+            font-size: 0.9rem;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(244, 228, 188, 0.1);
+        }
+        .divider span {
+            padding: 0 12px;
+        }
     </style>
 </head>
 <body>
@@ -195,52 +308,55 @@
 
         <!-- ЭКРАН ВХОДА -->
         <div id="screen-login" class="card">
-            <input type="text" id="join-code" placeholder="Код лобби (например, A1B2C)" maxlength="5">
+            <input type="text" id="join-code" placeholder="Код лобби (A1B2C)" maxlength="5">
             <button onclick="joinLobby()">Присоединиться</button>
-            <div style="margin: 15px 0; color: var(--lol-gold);">— или —</div>
+            <div class="divider"><span>или</span></div>
             <button class="secondary" onclick="createLobby()">Создать новое лобби</button>
-            <div id="login-error" class="error"></div>
+            <div id="login-error" class="error hidden"></div>
         </div>
 
         <!-- ЭКРАН ЛОББИ -->
         <div id="screen-lobby" class="hidden">
-            <div class="card">
-                <div style="font-size: 0.9rem; color: var(--lol-turquoise);">КОД ЛОББИ</div>
-                <div id="lobby-code" style="font-size: 2rem; font-weight: bold; color: var(--lol-gold); letter-spacing: 3px; margin: 10px 0;"></div>
-                <button class="secondary" onclick="copyCode()">📋 Скопировать код</button>
+            <div class="card" style="text-align: center;">
+                <div style="font-size: 0.85rem; color: var(--lol-turquoise); text-transform: uppercase; letter-spacing: 1px;">Код лобби</div>
+                <div id="lobby-code" style="font-size: 2.2rem; font-weight: 800; color: var(--lol-gold); letter-spacing: 4px; margin: 12px 0;"></div>
+                <button class="secondary" onclick="copyCode()" style="margin-top: 0;">📋 Скопировать код</button>
             </div>
             <div class="card">
-                <div style="text-align: left; margin-bottom: 10px; color: var(--lol-gold);">Игроки (<span id="player-count">0</span>/<span id="min-players">3</span>)</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; color: var(--lol-gold); font-weight: 600;">
+                    <span>Игроки</span>
+                    <span style="font-size: 0.9rem; opacity: 0.7;"><span id="player-count">0</span>/<span id="min-players">3</span></span>
+                </div>
                 <div id="player-list" class="player-list"></div>
-                <button id="btn-start" class="hidden" onclick="startGame()">🎮 Начать игру</button>
+                <button id="btn-start" class="hidden" onclick="startGame()" style="margin-top: 16px;">🎮 Начать игру</button>
                 <button class="secondary" onclick="leaveLobby()">🚪 Выйти из лобби</button>
             </div>
         </div>
 
         <!-- ЭКРАН КАРТОЧКИ -->
         <div id="screen-card" class="hidden">
-            <div class="card">
-                <div style="font-size: 0.9rem; color: var(--lol-turquoise); margin-bottom: 10px;">ВАША КАРТОЧКА</div>
+            <div class="card" style="text-align: center;">
+                <div style="font-size: 0.85rem; color: var(--lol-turquoise); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;">Ваша карточка</div>
                 <div id="card-avatar-container"></div>
                 <div id="card-name" class="card-title"></div>
                 <div id="card-hint" class="card-hint"></div>
             </div>
             <div class="card">
-                <div style="text-align: left; color: var(--lol-gold); margin-bottom: 10px;">📜 Порядок ходов:</div>
-                <ol id="order-list" class="order-list"></ol>
+                <div style="color: var(--lol-gold); font-weight: 600; margin-bottom: 12px;">📜 Порядок ходов</div>
+                <ul id="order-list" class="order-list"></ul>
             </div>
             <button id="btn-begin-voting" class="hidden" onclick="beginVoting()">🗳️ Начать голосование</button>
-            <div style="margin-top: 20px; font-size: 0.85rem; color: #6b7280;">Ожидайте действия хоста...</div>
+            <div style="margin-top: 24px; font-size: 0.85rem; color: rgba(244, 228, 188, 0.4); text-align: center;">Ожидайте действия хоста...</div>
         </div>
 
         <!-- ЭКРАН ГОЛОСОВАНИЯ -->
         <div id="screen-voting" class="hidden">
             <div class="card">
-                <div style="font-size: 1.1rem; color: var(--lol-gold); margin-bottom: 15px;">Кто шпион?</div>
+                <div style="font-size: 1.1rem; color: var(--lol-gold); font-weight: 600; margin-bottom: 16px; text-align: center;">Кто шпион?</div>
                 <div id="vote-list"></div>
-                <button class="secondary vote-btn" onclick="castVote('skip')">🤷 Пропустить / Не знаю</button>
-                <div style="margin-top: 15px; font-size: 0.9rem; color: var(--lol-turquoise);">
-                    Голосов: <span id="votes-cast">0</span> / <span id="votes-total">0</span>
+                <button class="secondary vote-btn" onclick="castVote('skip')" style="text-align: center; margin-top: 12px;">🤷 Пропустить / Не знаю</button>
+                <div style="margin-top: 20px; text-align: center; font-size: 0.9rem; color: var(--lol-turquoise); background: rgba(0, 180, 216, 0.08); padding: 10px; border-radius: 10px;">
+                    Голосов: <span id="votes-cast" style="font-weight: 700;">0</span> / <span id="votes-total" style="font-weight: 700;">0</span>
                 </div>
             </div>
             <button id="btn-reveal" class="hidden" onclick="revealNow()">⚡ Раскрыть сейчас</button>
@@ -248,16 +364,17 @@
 
         <!-- ЭКРАН РЕЗУЛЬТАТОВ -->
         <div id="screen-results" class="hidden">
-            <div class="card">
-                <div id="result-title" style="font-size: 1.3rem; font-weight: bold; margin-bottom: 15px;"></div>
-                <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
+            <div class="card" style="text-align: center;">
+                <div id="result-title" style="font-size: 1.4rem; font-weight: 800; margin-bottom: 20px;"></div>
+                <div style="display: flex; justify-content: space-around; margin-bottom: 24px; background: rgba(255,255,255,0.03); padding: 16px; border-radius: 16px;">
                     <div>
-                        <div style="font-size: 0.8rem; color: var(--lol-turquoise);">Шпион</div>
-                        <div id="res-spy" style="font-size: 1.1rem; color: var(--lol-red); font-weight: bold;"></div>
+                        <div style="font-size: 0.8rem; color: var(--lol-turquoise); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Шпион</div>
+                        <div id="res-spy" style="font-size: 1.1rem; color: var(--lol-red); font-weight: 700;"></div>
                     </div>
+                    <div style="width: 1px; background: rgba(255,255,255,0.1);"></div>
                     <div>
-                        <div style="font-size: 0.8rem; color: var(--lol-turquoise);">Чемпион</div>
-                        <div id="res-champ" style="font-size: 1.1rem; color: var(--lol-gold); font-weight: bold;"></div>
+                        <div style="font-size: 0.8rem; color: var(--lol-turquoise); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Чемпион</div>
+                        <div id="res-champ" style="font-size: 1.1rem; color: var(--lol-gold); font-weight: 700;"></div>
                     </div>
                 </div>
                 <table class="results-table">
@@ -284,13 +401,19 @@
 
         function showScreen(id) {
             document.querySelectorAll('.container > div[id^="screen-"]').forEach(el => el.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
+            const target = document.getElementById(id);
+            target.classList.remove('hidden');
+            // Перезапуск анимации для плавности
+            target.style.animation = 'none';
+            target.offsetHeight; /* trigger reflow */
+            target.style.animation = 'fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
         }
 
         function showError(msg) {
             const el = document.getElementById('login-error');
             el.textContent = msg;
-            setTimeout(() => el.textContent = '', 3000);
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.add('hidden'), 3000);
         }
 
         async function api(endpoint, method = 'GET', body = null) {
@@ -320,7 +443,7 @@
 
         async function joinLobby() {
             const code = document.getElementById('join-code').value.trim().toUpperCase();
-            if (code.length !== 5) return showError('Введите корректный 5-символьный код');
+            if (code.length !== 5) return showError('Введите 5-символьный код');
             try {
                 const data = await api('/join', 'POST', { code, user_id: userId, name: userName });
                 currentCode = code;
@@ -340,7 +463,6 @@
                 const data = await api(`/state/${currentCode}?user_id=${userId}`);
                 renderState(data);
             } catch (e) {
-                // Лобби могло удалиться
                 clearInterval(pollInterval);
                 currentCode = '';
                 showScreen('screen-login');
@@ -355,10 +477,10 @@
                 document.getElementById('min-players').textContent = data.min_players;
                 
                 const list = document.getElementById('player-list');
-                list.innerHTML = data.players.map(p => 
+                list.innerHTML = data.players.map((p, i) => 
                     `<div class="player-item ${p.is_host ? 'host' : ''}">
-                        <span>${p.name} ${p.user_id === userId ? '(Вы)' : ''}</span>
-                        ${p.is_host ? '<span class="badge">ХОСТ</span>' : ''}
+                        <span><b style="color: var(--lol-turquoise); margin-right: 8px;">${i + 1}.</b> ${p.name} ${p.user_id === userId ? '<span style="opacity: 0.6;">(Вы)</span>' : ''}</span>
+                        ${p.is_host ? '<span class="badge">Хост</span>' : ''}
                     </div>`
                 ).join('');
 
@@ -376,13 +498,15 @@
                     avatarContainer.innerHTML = `<div class="spy-avatar">🕵️</div>`;
                     document.getElementById('card-hint').textContent = 'Вы не знаете чемпиона. Слушайте внимательно и не выдавайте себя!';
                 } else {
-                    avatarContainer.innerHTML = `<img src="${data.card_avatar}" class="champion-avatar" alt="${data.card}" onerror="this.style.display='none'">`;
+                    // Извлекаем английское имя для URL (упрощенно, так как бэкенд уже может отдавать card_avatar, но на всякий случай)
+                    const avatarUrl = data.card_avatar || `https://ddragon.leagueoflegends.com/cdn/14.23.1/img/champion/${data.card.replace(/[^a-zA-Z]/g, '')}.png`;
+                    avatarContainer.innerHTML = `<img src="${avatarUrl}" class="champion-avatar" alt="${data.card}" onerror="this.style.display='none'">`;
                     document.getElementById('card-hint').textContent = 'Все мирные жители знают этого чемпиона. Задавайте наводящие вопросы!';
                 }
                 document.getElementById('card-name').textContent = data.card;
                 
                 document.getElementById('order-list').innerHTML = data.order.map((p, i) => 
-                    `<li>${i + 1}. ${p.name} ${p.user_id === userId ? '<b>(Вы)</b>' : ''}</li>`
+                    `<li><b style="color: var(--lol-gold); margin-right: 12px; font-size: 1.1rem;">${i + 1}.</b> <span>${p.name}</span> ${p.user_id === userId ? '<span style="margin-left: auto; color: var(--lol-turquoise); font-size: 0.85rem;">(Вы)</span>' : ''}</li>`
                 ).join('');
 
                 const btnBegin = document.getElementById('btn-begin-voting');
@@ -398,7 +522,7 @@
                 voteList.innerHTML = data.players.filter(p => p.user_id !== userId).map(p => {
                     const isVoted = data.your_vote === p.user_id;
                     return `<button class="vote-btn ${isVoted ? 'voted' : ''}" onclick="castVote('${p.user_id}')">
-                        🗳️ ${p.name} ${p.user_id === data.host_id ? '(Хост)' : ''}
+                        🗳️ ${p.name} ${p.user_id === data.host_id ? '<span style="opacity: 0.6; font-size: 0.85em;">(Хост)</span>' : ''}
                     </button>`;
                 }).join('');
 
@@ -416,7 +540,7 @@
                 document.getElementById('res-champ').textContent = res.common_champion;
                 
                 document.getElementById('res-tally').innerHTML = res.tally.map(t => 
-                    `<tr><td>${t.name}</td><td style="text-align: right; font-weight: bold;">${t.votes}</td></tr>`
+                    `<tr><td>${t.name}</td><td>${t.votes}</td></tr>`
                 ).join('');
 
                 const btnAgain = document.getElementById('btn-play-again');

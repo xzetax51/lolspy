@@ -17,81 +17,36 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # ==========================
-# ДАННЫЕ И КОНФИГУРАЦИЯ
+# ДАННЫЕ
 # ==========================
-
-# Маппинг русских названий на английские (для API Riot Games / Data Dragon)
-CHAMPION_NAME_MAP = {
-    "Аврора": "Aurora", "Азир": "Azir", "Акали": "Akali", "Акшан": "Akshan",
-    "Алистар": "Alistar", "Амбесса": "Ambessa", "Амуму": "Amumu",
-    "Анивия": "Anivia", "Ари": "Ahri", "Атрокс": "Aatrox",
-    "Аурелион Сол": "AurelionSol", "Афелий": "Aphelios", "Бард": "Bard",
-    "Бел'Вет": "Belveth", "Блицкранк": "Blitzcrank", "Брайер": "Briar",
-    "Брам": "Braum", "Брэнд": "Brand", "Вай": "Vi", "Варвик": "Warwick",
-    "Варус": "Varus", "Вейгар": "Veigar", "Вейн": "Vayne", "Векс": "Vex",
-    "Вел'Коз": "Velkoz", "Виего": "Viego", "Виктор": "Viktor",
-    "Владимир": "Vladimir", "Волибир": "Volibear", "Вуконг": "MonkeyKing",
-    "Галио": "Galio", "Гангпланк": "Gangplank", "Гарен": "Garen",
-    "Гвен": "Gwen", "Гекарим": "Hecarim", "Гнар": "Gnar", "Грас": "Gragas",
-    "Грейвз": "Graves", "Дариус": "Darius", "Джакс": "Jax",
-    "Джарван IV": "JarvanIV", "Джейс": "Jayce", "Джин": "Jhin",
-    "Джинкс": "Jinx", "Диана": "Diana", "Доктор Мундо": "DrMundo",
-    "Дрейвен": "Draven", "Иона": "Irelia", "Жанна": "Janna",
-    "Заахен": "Zaahen", "Зайра": "Zyra", "Зак": "Zac", "Зед": "Zed",
-    "Зери": "Zeri", "Зиггс": "Ziggs", "Зилеан": "Zilean", "Зои": "Zoe",
-    "Иверн": "Ivern", "Иллаой": "Illaoi", "Ирелия": "Irelia",
-    "Йорик": "Yorick", "К'Санте": "KSante", "Ка'Зикс": "Khazix",
-    "Каин": "Kayn", "Кай'Са": "Kaisa", "Калиста": "Kalista",
-    "Камилла": "Camille", "Карма": "Karma", "Картус": "Karthus",
-    "Кассадин": "Kassadin", "Кассиопея": "Cassiopeia", "Катарина": "Katarina",
-    "Квинн": "Quinn", "Кейл": "Kayle", "Кейтлин": "Caitlyn",
-    "Кеннен": "Kennen", "Киана": "Qiyana", "Киндред": "Kindred",
-    "Клед": "Kled", "Ког'Мао": "KogMaw", "Корки": "Corki",
-    "Ксин Жао": "XinZhao", "Ле Блан": "Leblanc", "Леона": "Leona",
-    "Ли Син": "LeeSin", "Лиллия": "Lillia", "Лиссандра": "Lissandra",
-    "Лулу": "Lulu", "Люкс": "Lux", "Люциан": "Lucian",
-    "Мальзахар": "Malzahar", "Мальфит": "Malphite", "Маокай": "Maokai",
-    "Мастер Йи": "MasterYi", "Милио": "Milio", "Мисс Фортуна": "MissFortune",
-    "Моргана": "Morgana", "Мордекайзер": "Mordekaiser", "Мэл": "Mel",
-    "Наафири": "Naafiri", "Нами": "Nami", "Насус": "Nasus",
-    "Наутилус": "Nautilus", "Нидали": "Nidalee", "Нико": "Neeko",
-    "Нила": "Nilah", "Ноктюрн": "Nocturne", "Нуну и Виллумп": "Nunu",
-    "Олаф": "Olaf", "Орианна": "Orianna", "Орн": "Ornn", "Пайк": "Pyke",
-    "Пантеон": "Pantheon", "Поппи": "Poppy", "Райз": "Ryze",
-    "Рамбл": "Rumble", "Раммус": "Rammus", "Рек'Сай": "RekSai",
-    "Реллу": "Rell", "Рената Гласк": "Renata", "Ренгар": "Rengar",
-    "Ренектон": "Renekton", "Ривен": "Riven", "Рэйкан": "Rakan",
-    "Сайлас": "Sylas", "Самира": "Samira", "Свейн": "Swain",
-    "Седжуани": "Sejuani", "Сенна": "Senna", "Серафина": "Seraphine",
-    "Сетт": "Sett", "Сивир": "Sivir", "Синджед": "Singed",
-    "Синдра": "Syndra", "Сион": "Sion", "Скарнер": "Skarner",
-    "Смолдер": "Smolder", "Сона": "Sona", "Сорака": "Soraka",
-    "Таам Кенч": "TahmKench", "Талия": "Taliyah", "Талон": "Talon",
-    "Тарик": "Taric", "Твистед Фэйт": "TwistedFate", "Твич": "Twitch",
-    "Тимо": "Teemo", "Трандл": "Trundle", "Треш": "Thresh",
-    "Триндамир": "Tryndamere", "Тристана": "Tristana", "Удир": "Udyr",
-    "Ургот": "Urgot", "Фиддлстикс": "Fiddlesticks", "Физз": "Fizz",
-    "Фиора": "Fiora", "Хвэй": "Hwei", "Хеймердингер": "Heimerdinger",
-    "Чо'Гат": "Chogath", "Шако": "Shaco", "Шая": "Xayah", "Шен": "Shen",
-    "Шивана": "Shyvana", "Эвелинн": "Evelynn", "Эзреаль": "Ezreal",
-    "Экко": "Ekko", "Элиза": "Elise", "Энни": "Annie", "Эш": "Ashe",
-    "Юми": "Yuumi", "Юнара": "Yone", "Ясуо": "Yasuo",
-}
-
-CHAMPIONS = list(CHAMPION_NAME_MAP.keys())
+CHAMPIONS = [
+    "Аврора", "Азир", "Акали", "Акшан", "Алистар", "Амбесса", "Амуму",
+    "Анивия", "Ари", "Атрокс", "Аурелион Сол", "Афелий", "Бард", "Бел'Вет",
+    "Блицкранк", "Брайер", "Брам", "Брэнд", "Вай", "Варвик", "Варус",
+    "Вейгар", "Вейн", "Векс", "Вел'Коз", "Виего", "Виктор", "Владимир",
+    "Волибир", "Вуконг", "Галио", "Гангпланк", "Гарен", "Гвен", "Гекарим",
+    "Гнар", "Грас", "Грейвз", "Дариус", "Джакс", "Джарван IV", "Джейс",
+    "Джин", "Джинкс", "Диана", "Доктор Мундо", "Дрейвен", "Иона", "Жанна",
+    "Заахен", "Зайра", "Зак", "Зед", "Зери", "Зиггс", "Зилеан", "Зои",
+    "Иверн", "Иллаой", "Ирелия", "Йорик", "К'Санте", "Ка'Зикс", "Каин",
+    "Кай'Са", "Калиста", "Камилла", "Карма", "Картус", "Кассадин", "Кассиопея",
+    "Катарина", "Квинн", "Кейл", "Кейтлин", "Кеннен", "Киана", "Киндред",
+    "Клед", "Ког'Мао", "Корки", "Ксин Жао", "Ле Блан", "Леона", "Ли Син",
+    "Лиллия", "Лиссандра", "Лулу", "Люкс", "Люциан", "Мальзахар", "Мальфит",
+    "Маокай", "Мастер Йи", "Милио", "Мисс Фортуна", "Моргана", "Мордекайзер",
+    "Мэл", "Наафири", "Нами", "Насус", "Наутилус", "Нидали", "Нико", "Нила",
+    "Ноктюрн", "Нуну и Виллумп", "Олаф", "Орианна", "Орн", "Пайк", "Пантеон",
+    "Поппи", "Райз", "Рамбл", "Раммус", "Рек'Сай", "Реллу", "Рената Гласк",
+    "Ренгар", "Ренектон", "Ривен", "Рэйкан", "Сайлас", "Самира", "Свейн",
+    "Седжуани", "Сенна", "Серафина", "Сетт", "Сивир", "Синджед", "Синдра",
+    "Сион", "Скарнер", "Смолдер", "Сона", "Сорака", "Таам Кенч", "Талия",
+    "Талон", "Тарик", "Твистед Фэйт", "Твич", "Тимо", "Трандл", "Треш",
+    "Триндамир", "Тристана", "Удир", "Ургот", "Фиддлстикс", "Физз", "Фиора",
+    "Хвэй", "Хеймердингер", "Чо'Гат", "Шако", "Шая", "Шен", "Шивана",
+    "Эвелинн", "Эзреаль", "Экко", "Элиза", "Энни", "Эш", "Юми", "Юнара", "Ясуо",
+]
 MIN_PLAYERS = 3
 SPY_CARD = "Шпион"
-DDRAGON_VERSION = "14.23.1"
-
-def get_champion_avatar_url(champion_name: str) -> str:
-    """Получить URL аватарки чемпиона через Data Dragon"""
-    if not champion_name or champion_name == SPY_CARD:
-        return ""
-    english_name = CHAMPION_NAME_MAP.get(champion_name)
-    if not english_name:
-        return ""
-    filename = english_name.replace(" ", "").replace("'", "")
-    return f"https://ddragon.leagueoflegends.com/cdn/{DDRAGON_VERSION}/img/champion/{filename}.png"
 
 # ==========================
 # МОДЕЛИ ДАННЫХ
@@ -104,7 +59,7 @@ class Lobby(BaseModel):
     code: str
     host_id: str
     players: Dict[str, Player] = Field(default_factory=dict)
-    status: str = "lobby"
+    status: str = "lobby"  # lobby | playing | voting | results
     common_champion: Optional[str] = None
     spy_champion: Optional[str] = None
     spy_id: Optional[str] = None
@@ -171,7 +126,7 @@ class VoteRequest(BaseModel):
     target_id: str
 
 # ==========================
-# СЕРИАЛИЗАЦИЯ СОСТОЯНИЯ (С АВАТАРКАМИ)
+# СЕРИАЛИЗАЦИЯ СОСТОЯНИЯ
 # ==========================
 def serialize_state(lobby: Lobby, user_id: str) -> dict:
     players = [
@@ -190,7 +145,6 @@ def serialize_state(lobby: Lobby, user_id: str) -> dict:
     if lobby.status in ("playing", "voting", "results"):
         is_spy = user_id == lobby.spy_id
         data["card"] = SPY_CARD if is_spy else lobby.common_champion
-        data["card_avatar"] = None if is_spy else get_champion_avatar_url(lobby.common_champion)
         data["is_spy"] = is_spy
         data["order"] = [
             {"user_id": uid, "name": lobby.players[uid].name}
@@ -256,7 +210,7 @@ async def join_lobby(req: JoinLobbyRequest):
     if not lobby:
         raise HTTPException(status_code=404, detail="Лобби не найдено")
     if lobby.status != "lobby":
-        raise HTTPException(status_code=400, detail="Игра уже началась")
+        raise HTTPException(status_code=400, detail="Игра уже началась, присоединиться нельзя")
     if req.user_id not in lobby.players:
         lobby.players[req.user_id] = Player(user_id=req.user_id, name=req.name or "Игрок")
         await save_lobby(lobby)
@@ -288,12 +242,11 @@ async def start_game(req: CodeUserRequest):
     player_ids = list(lobby.players.keys())
     lobby.spy_id = random.choice(player_ids)
 
+    # Честный рандом: шпион теперь может быть первым в списке
     order = player_ids[:]
     random.shuffle(order)
-    if order[0] == lobby.spy_id and len(order) > 1:
-        swap = random.randint(1, len(order) - 1)
-        order[0], order[swap] = order[swap], order[0]
     lobby.order = order
+    
     lobby.votes.clear()
     lobby.status = "playing"
     await save_lobby(lobby)
