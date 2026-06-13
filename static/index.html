@@ -1,734 +1,450 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Шпион: LoL Edition</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<style>
-  :root {
-    --bg: #0b0e14;
-    --bg-card: #161b26;
-    --bg-card-2: #1f2632;
-    --accent: #c89b3c;       /* золото LoL */
-    --accent-2: #0ac8b9;     /* бирюза LoL */
-    --danger: #e84057;
-    --text: #f0e6d2;
-    --text-dim: #a09b8c;
-    --border: #2a3140;
-    --radius: 14px;
-  }
-
-  * { box-sizing: border-box; }
-
-  html, body {
-    margin: 0;
-    padding: 0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    min-height: 100%;
-  }
-
-  #app {
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 16px;
-    padding-bottom: 32px;
-  }
-
-  .header {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-
-  .header h1 {
-    font-size: 22px;
-    margin: 0;
-    letter-spacing: 0.5px;
-    color: var(--accent);
-  }
-
-  .header .sub {
-    color: var(--text-dim);
-    font-size: 13px;
-    margin-top: 4px;
-  }
-
-  .card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px;
-    margin-bottom: 14px;
-  }
-
-  .card h2 {
-    margin: 0 0 12px;
-    font-size: 16px;
-    color: var(--text);
-  }
-
-  label {
-    display: block;
-    font-size: 13px;
-    color: var(--text-dim);
-    margin-bottom: 6px;
-  }
-
-  input[type="text"] {
-    width: 100%;
-    padding: 12px 14px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: var(--bg-card-2);
-    color: var(--text);
-    font-size: 16px;
-    margin-bottom: 12px;
-    outline: none;
-  }
-
-  input[type="text"]:focus {
-    border-color: var(--accent);
-  }
-
-  button {
-    width: 100%;
-    padding: 13px 16px;
-    border-radius: 10px;
-    border: none;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-bottom: 10px;
-    transition: transform 0.05s ease, opacity 0.15s ease;
-  }
-
-  button:active { transform: scale(0.98); }
-  button:disabled { opacity: 0.5; cursor: default; }
-
-  .btn-primary {
-    background: linear-gradient(135deg, var(--accent), #a9792f);
-    color: #1a1306;
-  }
-
-  .btn-secondary {
-    background: var(--bg-card-2);
-    color: var(--text);
-    border: 1px solid var(--border);
-  }
-
-  .btn-danger {
-    background: rgba(232, 64, 87, 0.15);
-    color: var(--danger);
-    border: 1px solid rgba(232, 64, 87, 0.4);
-  }
-
-  .btn-accent2 {
-    background: linear-gradient(135deg, var(--accent-2), #08948a);
-    color: #04201d;
-  }
-
-  .row { display: flex; gap: 10px; }
-  .row > * { flex: 1; }
-
-  .code-display {
-    text-align: center;
-    font-size: 32px;
-    font-weight: 700;
-    letter-spacing: 6px;
-    color: var(--accent);
-    background: var(--bg-card-2);
-    border-radius: 10px;
-    padding: 14px;
-    margin-bottom: 14px;
-    border: 1px dashed var(--border);
-  }
-
-  .player-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .player-list li {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 12px;
-    border-radius: 10px;
-    background: var(--bg-card-2);
-    margin-bottom: 8px;
-    font-size: 15px;
-  }
-
-  .badge {
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 999px;
-    background: rgba(200, 155, 60, 0.18);
-    color: var(--accent);
-    font-weight: 600;
-  }
-
-  .badge-you {
-    background: rgba(10, 200, 185, 0.18);
-    color: var(--accent-2);
-  }
-
-  .hint {
-    font-size: 13px;
-    color: var(--text-dim);
-    line-height: 1.5;
-  }
-
-  /* Карточка персонажа */
-  .champion-card {
-    text-align: center;
-    padding: 28px 16px;
-    border-radius: 18px;
-    margin-bottom: 16px;
-  }
-
-  .champion-card.normal {
-    background: linear-gradient(160deg, #1d2a3a, #11151f);
-    border: 1px solid #2c3e52;
-  }
-
-  .champion-card.spy {
-    background: linear-gradient(160deg, #3a1d23, #1f1115);
-    border: 1px solid #5a2733;
-  }
-
-  .champion-card .label {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--text-dim);
-    margin-bottom: 10px;
-  }
-
-  .champion-card .name {
-    font-size: 30px;
-    font-weight: 700;
-  }
-
-  .champion-card.normal .name { color: var(--accent-2); }
-  .champion-card.spy .name { color: var(--danger); }
-
-  .champion-card .desc {
-    margin-top: 12px;
-    font-size: 13px;
-    color: var(--text-dim);
-    line-height: 1.5;
-  }
-
-  /* Порядок ходов */
-  .order-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    counter-reset: order-counter;
-  }
-
-  .order-list li {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border-radius: 10px;
-    background: var(--bg-card-2);
-    margin-bottom: 8px;
-    font-size: 15px;
-  }
-
-  .order-num {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: #1a1306;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 13px;
-    flex-shrink: 0;
-  }
-
-  /* Голосование */
-  .vote-option {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 14px;
-    border-radius: 10px;
-    background: var(--bg-card-2);
-    border: 1px solid var(--border);
-    margin-bottom: 8px;
-    font-size: 15px;
-    cursor: pointer;
-  }
-
-  .vote-option.selected {
-    border-color: var(--accent);
-    background: rgba(200, 155, 60, 0.12);
-  }
-
-  .vote-progress {
-    font-size: 13px;
-    color: var(--text-dim);
-    text-align: center;
-    margin-bottom: 10px;
-  }
-
-  /* Результаты */
-  .result-banner {
-    text-align: center;
-    padding: 16px;
-    border-radius: 14px;
-    margin-bottom: 14px;
-    font-weight: 700;
-    font-size: 16px;
-  }
-
-  .result-banner.win {
-    background: rgba(10, 200, 185, 0.15);
-    color: var(--accent-2);
-    border: 1px solid rgba(10, 200, 185, 0.4);
-  }
-
-  .result-banner.lose {
-    background: rgba(232, 64, 87, 0.15);
-    color: var(--danger);
-    border: 1px solid rgba(232, 64, 87, 0.4);
-  }
-
-  .tally-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 12px;
-    border-radius: 10px;
-    background: var(--bg-card-2);
-    margin-bottom: 6px;
-    font-size: 14px;
-  }
-
-  .tally-row.spy-row {
-    border: 1px solid var(--danger);
-  }
-
-  .error-box {
-    background: rgba(232, 64, 87, 0.12);
-    border: 1px solid rgba(232, 64, 87, 0.4);
-    color: var(--danger);
-    border-radius: 10px;
-    padding: 10px 12px;
-    font-size: 13px;
-    margin-bottom: 12px;
-  }
-
-  .center { text-align: center; }
-  .mt8 { margin-top: 8px; }
-  .mt16 { margin-top: 16px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Шпион: LoL Edition</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --lol-gold: #c8aa6e;
+            --lol-gold-light: #f0e6d2;
+            --lol-turquoise: #0ac8b9;
+            --lol-dark: #010a13;
+            --lol-dark-light: #091428;
+            --lol-red: #e84057;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--lol-dark);
+            color: var(--lol-gold-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        h1 {
+            color: var(--lol-gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            color: var(--lol-turquoise);
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: linear-gradient(135deg, var(--lol-dark-light) 0%, #0a1428 100%);
+            border: 2px solid var(--lol-gold);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(200, 170, 110, 0.15);
+        }
+        .champion-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid var(--lol-gold);
+            box-shadow: 0 0 25px rgba(10, 200, 185, 0.4);
+            margin-bottom: 15px;
+            object-fit: cover;
+            background-color: #000;
+        }
+        .spy-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid var(--lol-red);
+            box-shadow: 0 0 25px rgba(232, 64, 87, 0.4);
+            margin: 0 auto 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            background-color: #1a0505;
+        }
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--lol-gold);
+            margin: 10px 0;
+        }
+        .card-hint {
+            color: var(--lol-turquoise);
+            font-size: 0.95rem;
+            margin-top: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: var(--lol-dark);
+            border: 1px solid var(--lol-gold);
+            color: var(--lol-gold-light);
+            border-radius: 6px;
+            font-size: 1rem;
+            text-align: center;
+            text-transform: uppercase;
+            box-sizing: border-box;
+        }
+        input::placeholder {
+            color: #6b7280;
+            text-transform: none;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            margin: 8px 0;
+            background: linear-gradient(to right, #1e282d, #0a1428);
+            border: 1px solid var(--lol-gold);
+            color: var(--lol-gold);
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        button:active {
+            background: var(--lol-gold);
+            color: var(--lol-dark);
+        }
+        button.secondary {
+            border-color: var(--lol-turquoise);
+            color: var(--lol-turquoise);
+        }
+        button.secondary:active {
+            background: var(--lol-turquoise);
+            color: var(--lol-dark);
+        }
+        .player-list {
+            text-align: left;
+            margin: 15px 0;
+        }
+        .player-item {
+            padding: 10px;
+            border-bottom: 1px solid rgba(200, 170, 110, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .player-item.host {
+            color: var(--lol-turquoise);
+        }
+        .player-item .badge {
+            font-size: 0.75rem;
+            background: var(--lol-gold);
+            color: var(--lol-dark);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .order-list {
+            text-align: left;
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        .order-list li {
+            margin: 8px 0;
+            color: var(--lol-gold-light);
+        }
+        .vote-btn {
+            margin: 5px 0;
+            text-transform: none;
+            font-weight: normal;
+        }
+        .vote-btn.voted {
+            background: var(--lol-turquoise);
+            color: var(--lol-dark);
+            border-color: var(--lol-turquoise);
+        }
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+        .results-table th, .results-table td {
+            padding: 8px;
+            border-bottom: 1px solid rgba(200, 170, 110, 0.2);
+            text-align: left;
+        }
+        .results-table th {
+            color: var(--lol-turquoise);
+        }
+        .hidden { display: none !important; }
+        .error { color: var(--lol-red); font-size: 0.9rem; margin-top: 10px; }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1>🕵️ Шпион: LoL</h1>
+        <div class="subtitle">Найди шпиона, не выдав себя</div>
 
-<div id="app">
-  <div class="header">
-    <h1>🕵️ ШПИОН: LoL EDITION</h1>
-    <div class="sub">Найди шпиона, не выдав себя</div>
-  </div>
-
-  <div id="error-container"></div>
-  <div id="screen"></div>
-</div>
-
-<script>
-  const tg = window.Telegram?.WebApp;
-  if (tg) {
-    tg.ready();
-    tg.expand();
-  }
-
-  // Определяем пользователя
-  function getUser() {
-    const tgUser = tg?.initDataUnsafe?.user;
-    if (tgUser) {
-      return {
-        id: String(tgUser.id),
-        name: [tgUser.first_name, tgUser.last_name].filter(Boolean).join(" ") || tgUser.username || "Игрок",
-      };
-    }
-    // фолбэк для теста в браузере
-    let id = localStorage.getItem("debug_user_id");
-    if (!id) {
-      id = "web_" + Math.random().toString(36).slice(2, 10);
-      localStorage.setItem("debug_user_id", id);
-    }
-    return { id, name: "Игрок " + id.slice(-4) };
-  }
-
-  const USER = getUser();
-
-  const API = ""; // тот же origin
-
-  let state = null;
-  let pollTimer = null;
-
-  // восстановление текущего лобби из localStorage
-  let currentCode = localStorage.getItem("spy_lobby_code");
-
-  function showError(msg) {
-    const c = document.getElementById("error-container");
-    c.innerHTML = `<div class="error-box">${msg}</div>`;
-    setTimeout(() => { c.innerHTML = ""; }, 4000);
-  }
-
-  async function api(path, body) {
-    const res = await fetch(API + path, {
-      method: body ? "POST" : "GET",
-      headers: body ? { "Content-Type": "application/json" } : {},
-      body: body ? JSON.stringify(body) : undefined,
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      throw new Error(data.detail || "Ошибка сервера");
-    }
-    return data;
-  }
-
-  function setLobbyCode(code) {
-    currentCode = code;
-    if (code) {
-      localStorage.setItem("spy_lobby_code", code);
-    } else {
-      localStorage.removeItem("spy_lobby_code");
-    }
-  }
-
-  function startPolling() {
-    stopPolling();
-    pollTimer = setInterval(refreshState, 1800);
-  }
-
-  function stopPolling() {
-    if (pollTimer) clearInterval(pollTimer);
-    pollTimer = null;
-  }
-
-  async function refreshState() {
-    if (!currentCode) return;
-    try {
-      const data = await api(`/api/state/${currentCode}?user_id=${encodeURIComponent(USER.id)}`);
-      state = data;
-      render();
-    } catch (e) {
-      // если лобби пропало — возвращаемся на главный экран
-      setLobbyCode(null);
-      state = null;
-      stopPolling();
-      render();
-    }
-  }
-
-  // ==========================
-  // ЭКРАНЫ
-  // ==========================
-
-  function renderHome() {
-    document.getElementById("screen").innerHTML = `
-      <div class="card">
-        <h2>Создать лобби</h2>
-        <p class="hint">Вы становитесь хостом и сможете запустить игру, когда наберётся минимум 3 игрока.</p>
-        <button class="btn-primary" id="btn-create">Создать новое лобби</button>
-      </div>
-
-      <div class="card">
-        <h2>Присоединиться по коду</h2>
-        <label for="join-code">Код лобби</label>
-        <input type="text" id="join-code" maxlength="5" placeholder="ABCDE" autocapitalize="characters" />
-        <button class="btn-secondary" id="btn-join">Войти в лобби</button>
-      </div>
-
-      <div class="hint center">Привет, ${escapeHtml(USER.name)}!</div>
-    `;
-
-    document.getElementById("btn-create").onclick = async () => {
-      try {
-        const data = await api("/api/create", { user_id: USER.id, name: USER.name });
-        setLobbyCode(data.code);
-        state = data;
-        startPolling();
-        render();
-      } catch (e) { showError(e.message); }
-    };
-
-    document.getElementById("btn-join").onclick = async () => {
-      const code = document.getElementById("join-code").value.trim().toUpperCase();
-      if (!code) { showError("Введите код лобби"); return; }
-      try {
-        const data = await api("/api/join", { code, user_id: USER.id, name: USER.name });
-        setLobbyCode(data.code);
-        state = data;
-        startPolling();
-        render();
-      } catch (e) { showError(e.message); }
-    };
-  }
-
-  function renderLobby() {
-    const isHost = state.host_id === USER.id;
-    const canStart = state.players.length >= state.min_players;
-
-    const playersHtml = state.players.map(p => `
-      <li>
-        <span>${escapeHtml(p.name)}</span>
-        <span>
-          ${p.is_host ? '<span class="badge">Хост</span>' : ''}
-          ${p.user_id === USER.id ? '<span class="badge badge-you">Вы</span>' : ''}
-        </span>
-      </li>
-    `).join("");
-
-    document.getElementById("screen").innerHTML = `
-      <div class="card">
-        <h2>Код лобби</h2>
-        <div class="code-display">${state.code}</div>
-        <p class="hint">Поделитесь этим кодом с друзьями — пусть введут его на главном экране, чтобы присоединиться.</p>
-      </div>
-
-      <div class="card">
-        <h2>Игроки (${state.players.length}/${state.min_players}+)</h2>
-        <ul class="player-list">${playersHtml}</ul>
-        ${!canStart ? `<p class="hint">Нужно минимум ${state.min_players} игрока, чтобы начать.</p>` : ""}
-      </div>
-
-      ${isHost ? `
-        <button class="btn-primary" id="btn-start" ${canStart ? "" : "disabled"}>🚀 Начать игру</button>
-      ` : `<p class="hint center">Ожидание, когда хост начнёт игру...</p>`}
-
-      <button class="btn-danger" id="btn-leave">Выйти из лобби</button>
-    `;
-
-    if (isHost) {
-      document.getElementById("btn-start").onclick = async () => {
-        try {
-          state = await api("/api/start", { code: state.code, user_id: USER.id });
-          render();
-        } catch (e) { showError(e.message); }
-      };
-    }
-
-    document.getElementById("btn-leave").onclick = async () => {
-      try {
-        await api("/api/leave", { code: state.code, user_id: USER.id });
-      } catch (e) { /* ignore */ }
-      setLobbyCode(null);
-      state = null;
-      stopPolling();
-      render();
-    };
-  }
-
-  function renderPlaying() {
-    const isSpy = state.is_spy;
-    const isHost = state.host_id === USER.id;
-
-    const orderHtml = state.order.map((p, i) => `
-      <li>
-        <span class="order-num">${i + 1}</span>
-        <span>${escapeHtml(p.name)}${p.user_id === USER.id ? " (вы)" : ""}</span>
-      </li>
-    `).join("");
-
-    document.getElementById("screen").innerHTML = `
-      <div class="champion-card ${isSpy ? "spy" : "normal"}">
-        <div class="label">${isSpy ? "Твоя роль" : "Персонаж"}</div>
-        <div class="name">${escapeHtml(state.card)}</div>
-        <div class="desc">
-          ${isSpy
-            ? "Ты — ШПИОН. У остальных игроков другой персонаж. Слушай описания и постарайся понять, кто остальные, не выдав себя!"
-            : "Среди вас есть шпион с другим персонажем. Описывай своего чемпиона намёками — без прямых названий, скиллов и фраз озвучки."}
+        <!-- ЭКРАН ВХОДА -->
+        <div id="screen-login" class="card">
+            <input type="text" id="join-code" placeholder="Код лобби (например, A1B2C)" maxlength="5">
+            <button onclick="joinLobby()">Присоединиться</button>
+            <div style="margin: 15px 0; color: var(--lol-gold);">— или —</div>
+            <button class="secondary" onclick="createLobby()">Создать новое лобби</button>
+            <div id="login-error" class="error"></div>
         </div>
-      </div>
 
-      <div class="card">
-        <h2>🎯 Порядок ходов</h2>
-        <ul class="order-list">${orderHtml}</ul>
-        <p class="hint">Каждый по очереди описывает своего персонажа намёками. Затем — обсуждение и голосование.</p>
-      </div>
-
-      ${isHost
-        ? `<button class="btn-accent2" id="btn-vote">🗳 Начать голосование</button>`
-        : `<p class="hint center">Ожидание, когда хост запустит голосование...</p>`}
-    `;
-
-    if (isHost) {
-      document.getElementById("btn-vote").onclick = async () => {
-        try {
-          state = await api("/api/begin_voting", { code: state.code, user_id: USER.id });
-          render();
-        } catch (e) { showError(e.message); }
-      };
-    }
-  }
-
-  function renderVoting() {
-    const isHost = state.host_id === USER.id;
-    const myVote = state.your_vote;
-
-    const optionsHtml = state.order.map(p => {
-      const selected = myVote === p.user_id ? "selected" : "";
-      return `
-        <div class="vote-option ${selected}" data-target="${p.user_id}">
-          <span>${escapeHtml(p.name)}${p.user_id === USER.id ? " (вы)" : ""}</span>
-          ${selected ? "✅" : ""}
+        <!-- ЭКРАН ЛОББИ -->
+        <div id="screen-lobby" class="hidden">
+            <div class="card">
+                <div style="font-size: 0.9rem; color: var(--lol-turquoise);">КОД ЛОББИ</div>
+                <div id="lobby-code" style="font-size: 2rem; font-weight: bold; color: var(--lol-gold); letter-spacing: 3px; margin: 10px 0;"></div>
+                <button class="secondary" onclick="copyCode()">📋 Скопировать код</button>
+            </div>
+            <div class="card">
+                <div style="text-align: left; margin-bottom: 10px; color: var(--lol-gold);">Игроки (<span id="player-count">0</span>/<span id="min-players">3</span>)</div>
+                <div id="player-list" class="player-list"></div>
+                <button id="btn-start" class="hidden" onclick="startGame()">🎮 Начать игру</button>
+                <button class="secondary" onclick="leaveLobby()">🚪 Выйти из лобби</button>
+            </div>
         </div>
-      `;
-    }).join("");
 
-    const skipSelected = myVote === "skip" ? "selected" : "";
-
-    document.getElementById("screen").innerHTML = `
-      <div class="card">
-        <h2>🗳 Кто шпион?</h2>
-        <p class="hint">Выберите игрока, которого вы считаете шпионом. Можно изменить голос, пока идёт голосование.</p>
-        ${optionsHtml}
-        <div class="vote-option ${skipSelected}" data-target="skip">
-          <span>🤷 Не знаю / пропустить</span>
-          ${skipSelected ? "✅" : ""}
+        <!-- ЭКРАН КАРТОЧКИ -->
+        <div id="screen-card" class="hidden">
+            <div class="card">
+                <div style="font-size: 0.9rem; color: var(--lol-turquoise); margin-bottom: 10px;">ВАША КАРТОЧКА</div>
+                <div id="card-avatar-container"></div>
+                <div id="card-name" class="card-title"></div>
+                <div id="card-hint" class="card-hint"></div>
+            </div>
+            <div class="card">
+                <div style="text-align: left; color: var(--lol-gold); margin-bottom: 10px;">📜 Порядок ходов:</div>
+                <ol id="order-list" class="order-list"></ol>
+            </div>
+            <button id="btn-begin-voting" class="hidden" onclick="beginVoting()">🗳️ Начать голосование</button>
+            <div style="margin-top: 20px; font-size: 0.85rem; color: #6b7280;">Ожидайте действия хоста...</div>
         </div>
-        <div class="vote-progress mt16">Проголосовало: ${state.votes_cast.length} из ${state.votes_total}</div>
-      </div>
 
-      ${isHost ? `<button class="btn-danger" id="btn-reveal">⏩ Завершить голосование и показать результат</button>` : ""}
-    `;
-
-    document.querySelectorAll(".vote-option").forEach(el => {
-      el.onclick = async () => {
-        const target = el.getAttribute("data-target");
-        try {
-          state = await api("/api/vote", { code: state.code, user_id: USER.id, target_id: target });
-          render();
-        } catch (e) { showError(e.message); }
-      };
-    });
-
-    if (isHost) {
-      document.getElementById("btn-reveal").onclick = async () => {
-        try {
-          state = await api("/api/reveal", { code: state.code, user_id: USER.id });
-          render();
-        } catch (e) { showError(e.message); }
-      };
-    }
-  }
-
-  function renderResults() {
-    const r = state.results;
-    const isHost = state.host_id === USER.id;
-    const win = r.players_caught_spy;
-
-    const tallyHtml = r.tally
-      .sort((a, b) => b.votes - a.votes)
-      .map(t => `
-        <div class="tally-row ${t.user_id === r.spy_id ? "spy-row" : ""}">
-          <span>${escapeHtml(t.name)}${t.user_id === r.spy_id ? " 🕵️" : ""}</span>
-          <span>${t.votes} голос(ов)</span>
+        <!-- ЭКРАН ГОЛОСОВАНИЯ -->
+        <div id="screen-voting" class="hidden">
+            <div class="card">
+                <div style="font-size: 1.1rem; color: var(--lol-gold); margin-bottom: 15px;">Кто шпион?</div>
+                <div id="vote-list"></div>
+                <button class="secondary vote-btn" onclick="castVote('skip')">🤷 Пропустить / Не знаю</button>
+                <div style="margin-top: 15px; font-size: 0.9rem; color: var(--lol-turquoise);">
+                    Голосов: <span id="votes-cast">0</span> / <span id="votes-total">0</span>
+                </div>
+            </div>
+            <button id="btn-reveal" class="hidden" onclick="revealNow()">⚡ Раскрыть сейчас</button>
         </div>
-      `).join("");
 
-    document.getElementById("screen").innerHTML = `
-      <div class="result-banner ${win ? "win" : "lose"}">
-        ${win
-          ? "✅ Игроки нашли шпиона!"
-          : "❌ Шпион остался не раскрыт"}
-      </div>
+        <!-- ЭКРАН РЕЗУЛЬТАТОВ -->
+        <div id="screen-results" class="hidden">
+            <div class="card">
+                <div id="result-title" style="font-size: 1.3rem; font-weight: bold; margin-bottom: 15px;"></div>
+                <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
+                    <div>
+                        <div style="font-size: 0.8rem; color: var(--lol-turquoise);">Шпион</div>
+                        <div id="res-spy" style="font-size: 1.1rem; color: var(--lol-red); font-weight: bold;"></div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; color: var(--lol-turquoise);">Чемпион</div>
+                        <div id="res-champ" style="font-size: 1.1rem; color: var(--lol-gold); font-weight: bold;"></div>
+                    </div>
+                </div>
+                <table class="results-table">
+                    <thead><tr><th>Игрок</th><th>Голоса</th></tr></thead>
+                    <tbody id="res-tally"></tbody>
+                </table>
+            </div>
+            <button id="btn-play-again" class="hidden" onclick="playAgain()">🔄 Новый раунд</button>
+            <button class="secondary" onclick="leaveLobby()">🚪 Выйти в меню</button>
+        </div>
+    </div>
 
-      <div class="card">
-        <h2>🕵️ Шпион</h2>
-        <p>Шпионом был: <b>${escapeHtml(r.spy_name)}</b></p>
-        <p>Карточка для всех: <b>${escapeHtml(r.common_champion)}</b></p>
-        <p>Карточка шпиона: <b>Шпион</b> (по факту — ${escapeHtml(r.spy_champion)})</p>
-      </div>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
 
-      <div class="card">
-        <h2>📊 Результаты голосования</h2>
-        ${tallyHtml || '<p class="hint">Никто не проголосовал.</p>'}
-        ${r.accused_name
-          ? `<p class="hint mt8">Большинство проголосовало за: <b>${escapeHtml(r.accused_name)}</b></p>`
-          : `<p class="hint mt8">Явного большинства не набралось.</p>`}
-      </div>
+        const user = tg.initDataUnsafe?.user;
+        const userId = user?.id?.toString() || 'guest_' + Math.random().toString(36).substr(2, 9);
+        const userName = user?.first_name || 'Игрок';
 
-      ${isHost
-        ? `<button class="btn-primary" id="btn-again">🔄 Новый раунд (тот же состав)</button>`
-        : `<p class="hint center">Ожидание решения хоста...</p>`}
+        let currentCode = '';
+        let pollInterval = null;
 
-      <button class="btn-danger" id="btn-leave2">Покинуть лобби</button>
-    `;
+        function showScreen(id) {
+            document.querySelectorAll('.container > div[id^="screen-"]').forEach(el => el.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        }
 
-    if (isHost) {
-      document.getElementById("btn-again").onclick = async () => {
-        try {
-          state = await api("/api/play_again", { code: state.code, user_id: USER.id });
-          render();
-        } catch (e) { showError(e.message); }
-      };
-    }
+        function showError(msg) {
+            const el = document.getElementById('login-error');
+            el.textContent = msg;
+            setTimeout(() => el.textContent = '', 3000);
+        }
 
-    document.getElementById("btn-leave2").onclick = async () => {
-      try {
-        await api("/api/leave", { code: state.code, user_id: USER.id });
-      } catch (e) { /* в фазе results выйти можно только после play_again, игнорируем ошибку */ }
-      setLobbyCode(null);
-      state = null;
-      stopPolling();
-      render();
-    };
-  }
+        async function api(endpoint, method = 'GET', body = null) {
+            const url = `/api${endpoint}`;
+            const options = { method, headers: { 'Content-Type': 'application/json' } };
+            if (body) options.body = JSON.stringify(body);
+            try {
+                const res = await fetch(url, options);
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || 'Ошибка сервера');
+                }
+                return await res.json();
+            } catch (e) {
+                console.error('API Error:', e);
+                throw e;
+            }
+        }
 
-  function render() {
-    if (!state) {
-      renderHome();
-      return;
-    }
-    switch (state.status) {
-      case "lobby": renderLobby(); break;
-      case "playing": renderPlaying(); break;
-      case "voting": renderVoting(); break;
-      case "results": renderResults(); break;
-      default: renderHome();
-    }
-  }
+        async function createLobby() {
+            try {
+                const data = await api('/create', 'POST', { user_id: userId, name: userName });
+                currentCode = data.code;
+                startPolling();
+            } catch (e) { showError(e.message); }
+        }
 
-  function escapeHtml(str) {
-    return String(str)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
-  }
+        async function joinLobby() {
+            const code = document.getElementById('join-code').value.trim().toUpperCase();
+            if (code.length !== 5) return showError('Введите корректный 5-символьный код');
+            try {
+                const data = await api('/join', 'POST', { code, user_id: userId, name: userName });
+                currentCode = code;
+                startPolling();
+            } catch (e) { showError(e.message); }
+        }
 
-  // ==========================
-  // СТАРТ
-  // ==========================
+        function startPolling() {
+            if (pollInterval) clearInterval(pollInterval);
+            updateState();
+            pollInterval = setInterval(updateState, 1800);
+        }
 
-  (async function init() {
-    if (currentCode) {
-      try {
-        const data = await api(`/api/state/${currentCode}?user_id=${encodeURIComponent(USER.id)}`);
-        state = data;
-        startPolling();
-      } catch (e) {
-        setLobbyCode(null);
-        state = null;
-      }
-    }
-    render();
-  })();
-</script>
+        async function updateState() {
+            if (!currentCode) return;
+            try {
+                const data = await api(`/state/${currentCode}?user_id=${userId}`);
+                renderState(data);
+            } catch (e) {
+                // Лобби могло удалиться
+                clearInterval(pollInterval);
+                currentCode = '';
+                showScreen('screen-login');
+            }
+        }
 
+        function renderState(data) {
+            if (data.status === 'lobby') {
+                showScreen('screen-lobby');
+                document.getElementById('lobby-code').textContent = data.code;
+                document.getElementById('player-count').textContent = data.players.length;
+                document.getElementById('min-players').textContent = data.min_players;
+                
+                const list = document.getElementById('player-list');
+                list.innerHTML = data.players.map(p => 
+                    `<div class="player-item ${p.is_host ? 'host' : ''}">
+                        <span>${p.name} ${p.user_id === userId ? '(Вы)' : ''}</span>
+                        ${p.is_host ? '<span class="badge">ХОСТ</span>' : ''}
+                    </div>`
+                ).join('');
+
+                const btnStart = document.getElementById('btn-start');
+                if (data.host_id === userId && data.players.length >= data.min_players) {
+                    btnStart.classList.remove('hidden');
+                } else {
+                    btnStart.classList.add('hidden');
+                }
+            } 
+            else if (data.status === 'playing') {
+                showScreen('screen-card');
+                const avatarContainer = document.getElementById('card-avatar-container');
+                if (data.is_spy) {
+                    avatarContainer.innerHTML = `<div class="spy-avatar">🕵️</div>`;
+                    document.getElementById('card-hint').textContent = 'Вы не знаете чемпиона. Слушайте внимательно и не выдавайте себя!';
+                } else {
+                    avatarContainer.innerHTML = `<img src="${data.card_avatar}" class="champion-avatar" alt="${data.card}" onerror="this.style.display='none'">`;
+                    document.getElementById('card-hint').textContent = 'Все мирные жители знают этого чемпиона. Задавайте наводящие вопросы!';
+                }
+                document.getElementById('card-name').textContent = data.card;
+                
+                document.getElementById('order-list').innerHTML = data.order.map((p, i) => 
+                    `<li>${i + 1}. ${p.name} ${p.user_id === userId ? '<b>(Вы)</b>' : ''}</li>`
+                ).join('');
+
+                const btnBegin = document.getElementById('btn-begin-voting');
+                if (data.host_id === userId) btnBegin.classList.remove('hidden');
+                else btnBegin.classList.add('hidden');
+            } 
+            else if (data.status === 'voting') {
+                showScreen('screen-voting');
+                document.getElementById('votes-cast').textContent = data.votes_cast.length;
+                document.getElementById('votes-total').textContent = data.votes_total;
+                
+                const voteList = document.getElementById('vote-list');
+                voteList.innerHTML = data.players.filter(p => p.user_id !== userId).map(p => {
+                    const isVoted = data.your_vote === p.user_id;
+                    return `<button class="vote-btn ${isVoted ? 'voted' : ''}" onclick="castVote('${p.user_id}')">
+                        🗳️ ${p.name} ${p.user_id === data.host_id ? '(Хост)' : ''}
+                    </button>`;
+                }).join('');
+
+                const btnReveal = document.getElementById('btn-reveal');
+                if (data.host_id === userId) btnReveal.classList.remove('hidden');
+                else btnReveal.classList.add('hidden');
+            } 
+            else if (data.status === 'results') {
+                showScreen('screen-results');
+                const res = data.results;
+                document.getElementById('result-title').textContent = res.players_caught_spy ? '🎉 Шпион пойман!' : '😈 Шпион сбежал!';
+                document.getElementById('result-title').style.color = res.players_caught_spy ? 'var(--lol-turquoise)' : 'var(--lol-red)';
+                
+                document.getElementById('res-spy').textContent = res.spy_name;
+                document.getElementById('res-champ').textContent = res.common_champion;
+                
+                document.getElementById('res-tally').innerHTML = res.tally.map(t => 
+                    `<tr><td>${t.name}</td><td style="text-align: right; font-weight: bold;">${t.votes}</td></tr>`
+                ).join('');
+
+                const btnAgain = document.getElementById('btn-play-again');
+                if (data.host_id === userId) btnAgain.classList.remove('hidden');
+                else btnAgain.classList.add('hidden');
+            }
+        }
+
+        async function startGame() { await api('/start', 'POST', { code: currentCode, user_id: userId }); }
+        async function beginVoting() { await api('/begin_voting', 'POST', { code: currentCode, user_id: userId }); }
+        async function castVote(target) { await api('/vote', 'POST', { code: currentCode, user_id: userId, target_id: target }); }
+        async function revealNow() { await api('/reveal', 'POST', { code: currentCode, user_id: userId }); }
+        async function playAgain() { await api('/play_again', 'POST', { code: currentCode, user_id: userId }); }
+        
+        async function leaveLobby() {
+            if (currentCode) {
+                await api('/leave', 'POST', { code: currentCode, user_id: userId }).catch(() => {});
+            }
+            currentCode = '';
+            if (pollInterval) clearInterval(pollInterval);
+            showScreen('screen-login');
+        }
+
+        function copyCode() {
+            navigator.clipboard.writeText(currentCode).then(() => {
+                tg.showPopup({ title: 'Скопировано!', message: `Код ${currentCode} скопирован в буфер обмена` });
+            });
+        }
+    </script>
 </body>
 </html>
