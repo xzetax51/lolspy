@@ -7,13 +7,12 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            /* Более мягкая и современная палитра в стиле LoL */
             --lol-gold: #d4af37;
             --lol-gold-light: #f4e4bc;
             --lol-turquoise: #00b4d8;
-            --lol-dark: #0f172a;       /* Глубокий сланец вместо черного */
-            --lol-dark-light: #1e293b; /* Светлый сланец для карточек */
-            --lol-red: #f43f5e;        /* Мягкий розово-красный */
+            --lol-dark: #0f172a;
+            --lol-dark-light: #1e293b;
+            --lol-red: #f43f5e;
             --glass-bg: rgba(30, 41, 59, 0.65);
             --glass-border: rgba(212, 175, 55, 0.15);
         }
@@ -40,12 +39,6 @@
             width: 100%;
             max-width: 480px;
             padding: 24px 20px;
-            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         h1 {
@@ -74,7 +67,6 @@
             padding: 24px;
             margin-bottom: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease;
         }
 
         .champion-avatar {
@@ -131,7 +123,7 @@
             font-size: 1.05rem;
             text-align: center;
             letter-spacing: 2px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
         }
 
         input::placeholder {
@@ -158,7 +150,7 @@
             font-weight: 600;
             border-radius: 14px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
             letter-spacing: 0.5px;
         }
 
@@ -190,7 +182,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: background 0.2s ease;
         }
 
         .player-item.host {
@@ -205,7 +196,6 @@
             padding: 3px 8px;
             border-radius: 20px;
             font-weight: 700;
-            text-transform: uppercase;
         }
 
         .order-list {
@@ -252,8 +242,6 @@
             text-align: left;
             padding: 0 8px 8px 8px;
             font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .results-table td {
@@ -318,7 +306,7 @@
         <!-- ЭКРАН ЛОББИ -->
         <div id="screen-lobby" class="hidden">
             <div class="card" style="text-align: center;">
-                <div style="font-size: 0.85rem; color: var(--lol-turquoise); text-transform: uppercase; letter-spacing: 1px;">Код лобби</div>
+                <div style="font-size: 0.85rem; color: var(--lol-turquoise); letter-spacing: 1px;">Код лобби</div>
                 <div id="lobby-code" style="font-size: 2.2rem; font-weight: 800; color: var(--lol-gold); letter-spacing: 4px; margin: 12px 0;"></div>
                 <button class="secondary" onclick="copyCode()" style="margin-top: 0;">📋 Скопировать код</button>
             </div>
@@ -336,7 +324,7 @@
         <!-- ЭКРАН КАРТОЧКИ -->
         <div id="screen-card" class="hidden">
             <div class="card" style="text-align: center;">
-                <div style="font-size: 0.85rem; color: var(--lol-turquoise); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;">Ваша карточка</div>
+                <div style="font-size: 0.85rem; color: var(--lol-turquoise); letter-spacing: 1px; margin-bottom: 16px;">Ваша карточка</div>
                 <div id="card-avatar-container"></div>
                 <div id="card-name" class="card-title"></div>
                 <div id="card-hint" class="card-hint"></div>
@@ -368,12 +356,12 @@
                 <div id="result-title" style="font-size: 1.4rem; font-weight: 800; margin-bottom: 20px;"></div>
                 <div style="display: flex; justify-content: space-around; margin-bottom: 24px; background: rgba(255,255,255,0.03); padding: 16px; border-radius: 16px;">
                     <div>
-                        <div style="font-size: 0.8rem; color: var(--lol-turquoise); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Шпион</div>
+                        <div style="font-size: 0.8rem; color: var(--lol-turquoise); margin-bottom: 4px;">Шпион</div>
                         <div id="res-spy" style="font-size: 1.1rem; color: var(--lol-red); font-weight: 700;"></div>
                     </div>
                     <div style="width: 1px; background: rgba(255,255,255,0.1);"></div>
                     <div>
-                        <div style="font-size: 0.8rem; color: var(--lol-turquoise); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Чемпион</div>
+                        <div style="font-size: 0.8rem; color: var(--lol-turquoise); margin-bottom: 4px;">Чемпион</div>
                         <div id="res-champ" style="font-size: 1.1rem; color: var(--lol-gold); font-weight: 700;"></div>
                     </div>
                 </div>
@@ -398,15 +386,18 @@
 
         let currentCode = '';
         let pollInterval = null;
+        let lastState = null; // Для отслеживания изменений
 
         function showScreen(id) {
-            document.querySelectorAll('.container > div[id^="screen-"]').forEach(el => el.classList.add('hidden'));
+            const currentVisible = document.querySelector('.container > div[id^="screen-"]:not(.hidden)');
             const target = document.getElementById(id);
-            target.classList.remove('hidden');
-            // Перезапуск анимации для плавности
-            target.style.animation = 'none';
-            target.offsetHeight; /* trigger reflow */
-            target.style.animation = 'fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            if (currentVisible && currentVisible.id !== id) {
+                currentVisible.classList.add('hidden');
+                target.classList.remove('hidden');
+            } else if (!currentVisible) {
+                target.classList.remove('hidden');
+            }
         }
 
         function showError(msg) {
@@ -461,10 +452,28 @@
             if (!currentCode) return;
             try {
                 const data = await api(`/state/${currentCode}?user_id=${userId}`);
-                renderState(data);
+                
+                // Проверяем, изменилось ли состояние
+                const stateChanged = !lastState || 
+                    lastState.status !== data.status || 
+                    JSON.stringify(lastState.players) !== JSON.stringify(data.players) ||
+                    lastState.card !== data.card ||
+                    lastState.votes_cast?.length !== data.votes_cast?.length;
+                
+                if (stateChanged) {
+                    renderState(data);
+                    lastState = data;
+                } else {
+                    // Обновляем только счетчики без перерисовки
+                    if (data.status === 'voting') {
+                        document.getElementById('votes-cast').textContent = data.votes_cast.length;
+                        document.getElementById('votes-total').textContent = data.votes_total;
+                    }
+                }
             } catch (e) {
                 clearInterval(pollInterval);
                 currentCode = '';
+                lastState = null;
                 showScreen('screen-login');
             }
         }
@@ -498,9 +507,12 @@
                     avatarContainer.innerHTML = `<div class="spy-avatar">🕵️</div>`;
                     document.getElementById('card-hint').textContent = 'Вы не знаете чемпиона. Слушайте внимательно и не выдавайте себя!';
                 } else {
-                    // Извлекаем английское имя для URL (упрощенно, так как бэкенд уже может отдавать card_avatar, но на всякий случай)
-                    const avatarUrl = data.card_avatar || `https://ddragon.leagueoflegends.com/cdn/14.23.1/img/champion/${data.card.replace(/[^a-zA-Z]/g, '')}.png`;
-                    avatarContainer.innerHTML = `<img src="${avatarUrl}" class="champion-avatar" alt="${data.card}" onerror="this.style.display='none'">`;
+                    // Используем card_avatar из API
+                    if (data.card_avatar) {
+                        avatarContainer.innerHTML = `<img src="${data.card_avatar}" class="champion-avatar" alt="${data.card}" onerror="this.style.display='none'">`;
+                    } else {
+                        avatarContainer.innerHTML = '';
+                    }
                     document.getElementById('card-hint').textContent = 'Все мирные жители знают этого чемпиона. Задавайте наводящие вопросы!';
                 }
                 document.getElementById('card-name').textContent = data.card;
@@ -560,6 +572,7 @@
                 await api('/leave', 'POST', { code: currentCode, user_id: userId }).catch(() => {});
             }
             currentCode = '';
+            lastState = null;
             if (pollInterval) clearInterval(pollInterval);
             showScreen('screen-login');
         }
